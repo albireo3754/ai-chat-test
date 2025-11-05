@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Chat } from '@ai-sdk/svelte';
+  import { getChatStore } from '$lib/chat';
 
   let input = '';
-  const chat = new Chat({});
+  const chat = getChatStore();
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
