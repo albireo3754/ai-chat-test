@@ -1,18 +1,21 @@
-import { browser } from '$app/environment';
 import { Chat } from '@ai-sdk/svelte';
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+  type ChatOnToolCallCallback,
+} from 'ai';
 
-const createChatStore = () => new Chat({});
+type ChatStoreOptions = {
+  api?: string;
+  onToolCall?: ChatOnToolCallCallback;
+};
 
-let browserSingleton: ReturnType<typeof createChatStore> | undefined;
+export function createChatStore(options: ChatStoreOptions = {}) {
+  const { api = '/api/chat', onToolCall } = options;
 
-export function getChatStore() {
-  if (!browser) {
-    return createChatStore();
-  }
-
-  if (!browserSingleton) {
-    browserSingleton = createChatStore();
-  }
-
-  return browserSingleton;
+  return new Chat({
+    transport: new DefaultChatTransport({ api }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    onToolCall,
+  });
 }

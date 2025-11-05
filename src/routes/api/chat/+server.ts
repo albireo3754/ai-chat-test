@@ -1,9 +1,13 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { streamText, type UIMessage, convertToModelMessages, jsonSchema, type JSONSchema7 } from 'ai';
-
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { configDotenv } from 'dotenv';
+import {
+  convertToModelMessages,
+  jsonSchema,
+  streamText,
+  type JSONSchema7,
+  type UIMessage,
+} from 'ai';
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 
 configDotenv();
@@ -13,35 +17,49 @@ const bedrock = createAmazonBedrock({
   credentialProvider: fromNodeProviderChain(),
 });
 
-// const openai = createOpenAI({
-//   apiKey: OPENAI_API_KEY,
-// })'
-
 export async function POST({ request }) {
-    const { 
-    model, 
+  const {
+    model,
     messages,
     tools,
-  }: { 
-    messages: UIMessage[]; 
+  }: {
+    messages: UIMessage[];
     model?: string;
     tools?: Tool[];
   } = await request.json();
 
-  // Convert MCP tools to AI SDK format
-  const aiTools = Object.fromEntries( 
-    (tools || []).map(tool => [ 
-      tool.name, 
-      { 
-        description: tool.description || tool.name, 
-        inputSchema: jsonSchema(tool.inputSchema as JSONSchema7), 
-      }, 
-    ]), 
-  ); 
+  const toolEntries = (tools ?? []).flatMap((tool) => {
+    const { name, inputSchema, description } = tool ?? {};
 
+    if (!name || !inputSchema) {
+      console.warn(`Skipping invalid tool definition`, tool);
+      return [];
+    }
+
+    try {
+      return [
+        [
+          name,
+          {
+            description: description || name,
+            inputSchema: jsonSchema(inputSchema as JSONSchema7),
+          },
+        ] as const,
+      ];
+    } catch (error) {
+      console.warn(`Failed to convert tool schema for ${name}:`, error);
+      return [];
+    }
+  });
+
+  const aiTools =
+    toolEntries.length > 0 ? Object.fromEntries(toolEntries) : undefined;
+
+  const selectedModel =
+    model ?? 'apac.anthropic.claude-3-sonnet-20240229-v1:0';
 
   const result = streamText({
-    model:bedrock('apac.anthropic.claude-3-sonnet-20240229-v1:0'),
+    model: bedrock(selectedModel),
     tools: aiTools,
     messages: convertToModelMessages(messages),
   });
