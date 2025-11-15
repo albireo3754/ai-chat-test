@@ -64,5 +64,23 @@ export async function POST({ request }) {
     messages: convertToModelMessages(messages),
   });
 
-  return result.toUIMessageStreamResponse();
+  const result2 = result.toUIMessageStreamResponse();
+
+if (result2.body) {
+  const transformStream = new TransformStream({
+    transform(chunk, controller) {
+      // 로깅
+      console.log('Streamed chunk:', new TextDecoder().decode(chunk));
+      // 그대로 통과
+      controller.enqueue(chunk);
+    },
+  });
+  
+  return new Response(result2.body.pipeThrough(transformStream), {
+    headers: result2.headers,
+    status: result2.status,
+  });
+}
+
+return result2;
 }

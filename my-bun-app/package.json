@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/amazon-bedrock": "^4.0.0-beta.58",
+    "@ai-sdk/openai": "^3.0.0-beta.59",
+    "@ai-sdk/react": "^3.0.0-beta.99",
+    "ai": "^6.0.0-beta.99",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"
