@@ -1,22 +1,21 @@
 'use client';
 
-import { useChat } from "@ai-sdk/react";
+import { Chat, useChat } from "@ai-sdk/react";
+import { AbstractChat, ChatInit, ChatState, ChatStatus, DefaultChatTransport, UIMessage } from "ai";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { MyChat, MyChatState, useMyChat } from "./chat";
 
 
 export default function Home() {
   const [input, setInput] = useState('');
-  const { messages, sendMessage } = useChat({
-    onToolCall: (toolCall) => {
-      console.log('Tool called:', toolCall);
-    },
-    onFinish: (message) => {
-      console.log('Chat finished:', message);
-    },
-    onData: (message) => {
-      console.log('New message data:', message);
-    }
+  const chatRef = useRef<MyChat<UIMessage>>(
+    new MyChat<UIMessage>({
+      id: 'my-chat',
+    }),
+  );
+  const { messages, sendMessage } = useMyChat({
+    chat: chatRef.current
   });
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
