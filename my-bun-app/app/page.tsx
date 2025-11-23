@@ -15,7 +15,8 @@ export default function Home() {
     }),
   );
   const { messages, sendMessage } = useMyChat({
-    chat: chatRef.current
+    chat: chatRef.current,
+    experimental_throttle: 300,
   });
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

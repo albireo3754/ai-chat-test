@@ -24,6 +24,7 @@ export class MyChatState<UI_MESSAGE extends UIMessage>
   }
 
   set status(newStatus: ChatStatus) {
+    console.log(`Status changed from: ${this.#status} to: ${newStatus}`);
     this.#status = newStatus;
     this.#callStatusCallbacks();
   }
@@ -43,20 +44,24 @@ export class MyChatState<UI_MESSAGE extends UIMessage>
 
   set messages(newMessages: UI_MESSAGE[]) {
     this.#messages = [...newMessages];
+    console.log("Set messages:", this.#messages);
     this.#callMessagesCallbacks();
   }
 
   pushMessage = (message: UI_MESSAGE) => {
     this.#messages = this.#messages.concat(message);
+    console.log("Pushed message:", JSON.stringify(message));
     this.#callMessagesCallbacks();
   };
 
   popMessage = () => {
+    console.log(`Popping message:`, this.#messages[this.#messages.length - 1]);
     this.#messages = this.#messages.slice(0, -1);
     this.#callMessagesCallbacks();
   };
 
   replaceMessage = (index: number, message: UI_MESSAGE) => {
+    console.log(`Replacing message at index ${index} with:`, JSON.stringify(message));
     this.#messages = [
       ...this.#messages.slice(0, index),
       // We deep clone the message here to ensure the new React Compiler (currently in RC) detects deeply nested parts/metadata changes:
