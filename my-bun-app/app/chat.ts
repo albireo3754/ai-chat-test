@@ -1,3 +1,5 @@
+// Based on Vercel AI SDK Chat (Apache-2.0), source: https://github.com/vercel/ai
+// Modifications: adapted for this project on 2025-11-23
 import { Chat, UseChatHelpers, UseChatOptions } from "@ai-sdk/react";
 import { AbstractChat, ChatInit, ChatState, ChatStatus, UIMessage } from "ai";
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";

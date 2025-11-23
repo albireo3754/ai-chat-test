@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Licensing and attribution
+
+- Portions of `app/chat.ts` are based on Vercel AI SDK Chat (Apache-2.0), source: https://github.com/vercel/ai.
+- Modifications were made for this project on 2025-11-23; see `LICENSE` for full terms.
+
 ## Getting Started
 
 First, run the development server:
